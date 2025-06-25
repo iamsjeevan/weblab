@@ -1,0 +1,13 @@
+{
+  "name": "q2-app",
+  "version": "1.0.0",
+  "description": "Question 2 Solution",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.6.3"
+  }
+}
