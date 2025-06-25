@@ -1,0 +1,25 @@
+<html>
+<body>
+  <h2>Submit a Complaint</h2>
+  <form action="/insert" method="post">
+    <input type="text" name="user_name" required placeholder="Your Name">
+    <input type="text" name="issue" required placeholder="Issue"></input>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>Update Complaint Status</h2>
+  <form action="/update" method="post">
+    <input type="text" name="user_name" required placeholder="Complaint user">
+    <select name="status">
+      <option value="inprogress">In Progress</option>
+      <option value="resolved">Resolved</option>
+    </select>
+    <button type="submit">Update</button>
+  </form>
+
+  <h2>View Pending Complaints</h2>
+  <form action="/pending" method="get">
+    <button type="submit">Load Pending</button>
+  </form>
+</body>
+</html>

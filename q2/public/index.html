@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Q2 Student Fees</title>
+</head>
+<body>
+    <h1>Add Student (POST)</h1>
+    <form action="/addstudent" method="POST">
+        <input name="Student_name" placeholder="Name" required>
+        <input name="USN" placeholder="USN" required>
+        <input name="Semester" type="number" placeholder="Semester" required>
+        <input name="Exam_fee" type="number" placeholder="Exam Fee (0 if unpaid)">
+        <button type="submit">Add Student</button>
+    </form>
+    
+    <hr>
+    
+    <h1>Current Students</h1>
+    <div id="student-list">Loading...</div>
+
+    <hr>
+
+    <h1>Delete Students with Unpaid Fees (POST)</h1>
+    <form action="/deletenonpayers" method="POST">
+        <button type="submit" style="background-color: #dc3545; color: white;">Delete Non-Payers</button>
+    </form>
+
+    <script>
+        async function loadStudents() {
+            const listDiv = document.getElementById('student-list');
+            try {
+                const response = await fetch('/allstudents');
+                const students = await response.json();
+                
+                listDiv.innerHTML = ''; // Clear 'Loading...' text
+                
+                if (students.length === 0) {
+                    listDiv.innerHTML = '<p>No students in database.</p>';
+                    return;
+                }
+
+                const ul = document.createElement('ul');
+                students.forEach(s => {
+                    const li = document.createElement('li');
+                    li.textContent = `Name: ${s.Student_name}, USN: ${s.USN}, Fee: ${s.Exam_fee || 'Not Paid'}`;
+                    ul.appendChild(li);
+                });
+                listDiv.appendChild(ul);
+
+            } catch (error) {
+                listDiv.innerHTML = '<p>Error loading students.</p>';
+            }
+        }
+        
+        // Load students when the page is first opened
+        window.onload = loadStudents;
+    </script>
+</body>
+</html>

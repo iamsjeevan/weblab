@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Q1 Test</title>
+</head>
+<body>
+    <h1>Create Complaint (POST)</h1>
+    <form action="/complaints" method="POST">
+        <input name="ComplaintID" placeholder="Complaint ID" required>
+        <input name="UserName" placeholder="User Name" required>
+        <input name="Issue" placeholder="Issue" required>
+        <input type="hidden" name="Status" value="In Progress">
+        <button type="submit">Create</button>
+    </form>
+
+    <hr>
+
+    <h1>Pending Complaints (GET)</h1>
+    <button onclick="getPendingComplaints()">Fetch Pending Complaints</button>
+    <div id="complaints-list"></div>
+
+    <script>
+        async function getPendingComplaints() {
+            const listDiv = document.getElementById('complaints-list');
+            listDiv.innerHTML = 'Loading...';
+            const response = await fetch('/pending');
+            const complaints = await response.json();
+            listDiv.innerHTML = '';
+            for (const c of complaints) {
+                const complaintDiv = document.createElement('div');
+                complaintDiv.innerHTML = `
+                    <p>
+                        ID: ${c.ComplaintID}, User: ${c.UserName}, Status: ${c.Status}
+                        <button onclick="updateComplaint('${c.ComplaintID}')">Mark as Resolved (PUT)</button>
+                    </p>
+                `;
+                listDiv.appendChild(complaintDiv);
+            }
+        }
+
+        async function updateComplaint(id) {
+            await fetch('/complaints/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Status: 'Resolved' })
+            });
+            alert('Update request sent for ' + id + '. Fetch again to see changes.');
+            getPendingComplaints();
+        }
+    </script>
+</body>
+</html>
