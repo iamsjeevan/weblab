@@ -1,5 +1,10 @@
 import sys
 import os
+import warnings
+import urllib3
+
+# Suppress the OpenSSL warning, as it's not an error for this app
+warnings.filterwarnings("ignore", category=urllib3.exceptions.NotOpenSSLWarning)
 
 # --- Robust Dependency Check ---
 # Get the absolute path of the directory where this script is located
@@ -27,11 +32,11 @@ except ImportError:
 import json
 
 def main():
-    # The server IP is now passed as an argument from the start script
-    if len(sys.argv) < 2:
-        print("ERROR: Server IP was not provided. Please use the start script.")
+    # The Python script now asks for the IP address every time.
+    server_ip = input("Enter the server IP address: ").strip()
+    if not server_ip:
+        print("ERROR: Server IP cannot be empty.")
         return
-    server_ip = sys.argv[1]
 
     print("Gemini LAN Client")
     print(f"Connecting to server at: {server_ip}")

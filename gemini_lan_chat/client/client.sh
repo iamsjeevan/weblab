@@ -1,17 +1,22 @@
 #!/bin/bash
-LIBS_DIR="libs"
-CLIENT_SCRIPT="client.py"
-BUNDLE_FILENAME="requests_bundle.zip"
 
+# Get the absolute directory where the script is located
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Define paths relative to the script's location
+LIBS_DIR="$SCRIPT_DIR/libs"
+CLIENT_SCRIPT="$SCRIPT_DIR/client.py"
+BUNDLE_FILENAME="$SCRIPT_DIR/requests_bundle.zip"
+
+# This setup function only runs if the 'libs' directory is missing
 run_setup() {
     echo "--- First-time setup: Installing dependencies ---"
-    read -p "Enter the server's Public IP address: " SERVER_IP
-    if [ -z "$SERVER_IP" ]; then echo "ERROR: IP cannot be empty."; exit 1; fi
+    # This prompt is NECESSARY for the one-time download
+    read -p "Enter server IP for one-time dependency download: " SETUP_SERVER_IP
+    if [ -z "$SETUP_SERVER_IP" ]; then echo "ERROR: IP cannot be empty."; exit 1; fi
     
-    echo "$SERVER_IP" > .server_ip_cache
-
-    BUNDLE_URL="http://${SERVER_IP}:5000/download_dependencies"
-    echo "Downloading from $SERVER_IP..."
+    BUNDLE_URL="http://${SETUP_SERVER_IP}:5000/download_dependencies"
+    echo "Downloading from $SETUP_SERVER_IP..."
     curl -# -L -f -o "$BUNDLE_FILENAME" "$BUNDLE_URL"
     
     if [ $? -ne 0 ]; then echo "ERROR: Download failed. Check server IP and connection."; exit 1; fi
@@ -20,7 +25,7 @@ run_setup() {
     python3 -c "import os, sys, platform, zipfile, shutil
 LIBS_DIR = '$LIBS_DIR'
 BUNDLE_FILENAME = '$BUNDLE_FILENAME'
-TEMP_EXTRACT_PATH = 'temp_bundle_extract'
+TEMP_EXTRACT_PATH = '$SCRIPT_DIR/temp_bundle_extract'
 def get_platform_identifier():
     s, m = platform.system().lower(), platform.machine().lower()
     if s == 'linux': return 'linux_x86_64' if m in ['x86_64', 'amd64'] else 'linux_aarch64'
@@ -39,14 +44,12 @@ shutil.rmtree(TEMP_EXTRACT_PATH)
     echo "--- Setup complete! ---"
 }
 
-if [ ! -d "$LIBS_DIR" ]; then run_setup; fi
-
-if [ ! -f .server_ip_cache ]; then
-    read -p "Enter the server's Public IP address: " SERVER_IP
-    echo "$SERVER_IP" > .server_ip_cache
-else
-    SERVER_IP=$(cat .server_ip_cache)
+# --- Main Logic ---
+# 1. Check if setup needs to be run.
+if [ ! -d "$LIBS_DIR" ]; then
+    run_setup
 fi
 
+# 2. Launch the client script WITHOUT any arguments
 echo "Starting client..."
-python3 "$CLIENT_SCRIPT" "$SERVER_IP"
+python3 "$CLIENT_SCRIPT"
