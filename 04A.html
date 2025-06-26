@@ -1,49 +1,49 @@
-
-<!-- 
-install react folder from server (also provided in this web-test folder)
-install node_module folder (also provided in this web-test folder)
-gedit 4a.html (write the given code)
-open 4a.html
-
-note: no need on npm init or npm install, use only provided folders 
--->
-
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" /> <!-- **really important line -->
+<head>
+    <meta charset="UTF-8" />
+    <title>Q4(a) - React Employee Details (FIXED)</title>
+    <!-- Assume these files are in the same folder -->
     <script src="react/react.development.js"></script>
     <script src="react/react-dom.development.js"></script>
-    <script src="react/prop-types.js"></script>
     <script src="react/babel.min.js"></script>
-  </head>
-  <body>
-     <div id="root"></div>
-     <script type="text/babel">
-		   class Qb4a extends React.Component {
-    constructor()
-    {
-        super()
-        this.state=
-        {
-            name:"harsh",
-            address:"msrit",
-            company:"xyz"
-        }
-    }
-    changeMessage(){
-        this.setState({
-            name:"haksham",
-            address:"udz"
-        })
-    }
-    render() {
-        return (
-            <div>
-                <p>{this.state.name} {this.state.address} {this.state.company}</p>
-                <button onClick={()=>this.changeMessage()}>Change</button>
-            </div>)}}
+</head>
+<body>
+    <div id="root"></div>
 
-		ReactDOM.render(<Qb4a />,document.getElementById('root'));
-        </script>	
-  </body>
+    <script type="text/babel">
+        const { useState } = React;
+
+        function Employee() {
+            const [employee, setEmployee] = useState({
+                name: "John Doe",
+                address: "123 Main St",
+                company: "Tech Corp"
+            });
+
+            const handleChangeClick = () => {
+                setEmployee({
+                    ...employee, 
+                    name: "Jane Smith",
+                    address: "456 Oak Ave"
+                });
+            };
+
+            return (
+                <div>
+                    <h1>Employee Details</h1>
+                    <p>Name: {employee.name}</p>
+                    <p>Address: {employee.address}</p>
+                    <p>Company: {employee.company}</p>
+                    <button onClick={handleChangeClick}>CHANGE</button>
+                </div>
+            );
+        }
+
+        // --- THE FIX IS HERE ---
+        // Use the older, more compatible render method.
+        ReactDOM.render(<Employee />, document.getElementById('root'));
+
+    </script>
+</body>
 </html>
