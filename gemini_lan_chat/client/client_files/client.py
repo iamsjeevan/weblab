@@ -1,10 +1,6 @@
 import sys
 import os
-import warnings
-import urllib3
-
-# Suppress the OpenSSL warning, as it's not an error for this app
-warnings.filterwarnings("ignore", category=urllib3.exceptions.NotOpenSSLWarning)
+# We leave 'json' out for now as it will be imported later with the others.
 
 # --- Robust Dependency Check ---
 # Get the absolute path of the directory where this script is located
@@ -18,18 +14,25 @@ if not os.path.isdir(LIBS_DIR):
     print("Please run 'start_client.sh' or 'start_client.bat' to install dependencies.")
     sys.exit(1)
 
-# Add the libs directory to the Python path
+# Add the libs directory to the Python path. THIS IS THE CRITICAL STEP.
 sys.path.insert(0, LIBS_DIR)
 # --- End Dependency Check ---
 
+
+# --- NOW it is safe to import everything from the libs folder ---
 try:
+    import json
+    import warnings
+    import urllib3
     import requests
-except ImportError:
-    print(f"ERROR: Failed to import required libraries from '{LIBS_DIR}'.")
-    print("The 'libs' directory might be corrupted. Please delete it and run the start script again.")
+    # Suppress the specific OpenSSL warning, as it's not an error for this app
+    warnings.filterwarnings("ignore", category=urllib3.exceptions.NotOpenSSLWarning)
+except ImportError as e:
+    # This will catch if any of the libraries are missing
+    print(f"ERROR: A required library is missing: {e}")
+    print(f"The 'libs' directory might be corrupted. Please delete it and run the start script again.")
     sys.exit(1)
-    
-import json
+
 
 def main():
     # The Python script now asks for the IP address every time.
