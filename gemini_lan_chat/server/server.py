@@ -17,7 +17,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY not found in .env file or environment variables.")
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash') # Or your preferred model
+model = genai.GenerativeModel('gemini-2.5-flash') # Or your preferred model
 
 # In-memory storage for conversations, keyed by client IP
 active_chats = {}
